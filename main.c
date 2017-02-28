@@ -8,9 +8,30 @@
 
 #ifdef OPT
 #define OUT_FILE "opt.txt"
+
+void freeMem(entry *Head)
+{
+    if (Head->pNext) free(Head->pNext);
+}
+
+#elif HASH_OPT
+#define OUT_FILE "hash_opt.txt"
+
+void freeMem(entry **Head)
+{
+    free(*Head);
+}
+
 #else
 #define OUT_FILE "orig.txt"
+
+void freeMem(entry *Head)
+{
+    if (Head->pNext) free(Head->pNext);
+}
+
 #endif
+
 
 #define DICT_FILE "./dictionary/words.txt"
 
@@ -43,16 +64,37 @@ int main(int argc, char *argv[])
     }
 
     /* build the entry */
+#ifdef HASH_OPT
+    entry **pHead, **e;
+    unsigned long int hash_index = 0;
+    pHead = (entry **) malloc(sizeof(entry*) * HASH_TABLE_SIZE);
+    printf("size of entry : %lu bytes\n", sizeof(entry));
+    e = pHead;
+#else
     entry *pHead, *e;
     pHead = (entry *) malloc(sizeof(entry));
     printf("size of entry : %lu bytes\n", sizeof(entry));
     e = pHead;
-    e->pNext = NULL;
+    strcpy(e->lastName,"");
+#endif
 
 #if defined(__GNUC__)
     __builtin___clear_cache((char *) pHead, (char *) pHead + sizeof(entry));
 #endif
     clock_gettime(CLOCK_REALTIME, &start);
+
+#ifdef HASH_OPT
+    entry *test = NULL;
+    i = 0;
+    while (fgets(line, sizeof(line), fp)) {
+        while (line[i] != '\0')
+            i++;
+        line[i - 1] = '\0';
+        i = 0;
+        hash_index = hash_function(line);
+        test = append(line, &pHead[hash_index]);
+    }
+#else
     while (fgets(line, sizeof(line), fp)) {
         while (line[i] != '\0')
             i++;
@@ -60,6 +102,8 @@ int main(int argc, char *argv[])
         i = 0;
         e = append(line, e);
     }
+#endif
+
     clock_gettime(CLOCK_REALTIME, &end);
     cpu_time1 = diff_in_second(start, end);
 
@@ -92,7 +136,7 @@ int main(int argc, char *argv[])
     printf("execution time of append() : %lf sec\n", cpu_time1);
     printf("execution time of findName() : %lf sec\n", cpu_time2);
 
-    if (pHead->pNext) free(pHead->pNext);
+    freeMem(pHead);
     free(pHead);
 
     return 0;
