@@ -6,7 +6,7 @@
 /* TODO: After modifying the original version, uncomment the following
  * line to set OPT properly */
 #define OPT 1
-typedef struct __PHONE_BOOK_OTHER_DATA {
+typedef struct __PHONE_BOOK_OTHER_INFO {
     char firstName[16];
     char email[16];
     char phone[10];
@@ -16,11 +16,11 @@ typedef struct __PHONE_BOOK_OTHER_DATA {
     char city[16];
     char state[2];
     char zip[5];
-} otherData;
+} otherInfo;
 
 typedef struct __PHONE_BOOK_ENTRY {
     char lastName[MAX_LAST_NAME_SIZE];
-    otherData *data;
+    otherInfo *info;
     struct __PHONE_BOOK_ENTRY *pNext;
 } entry;
 

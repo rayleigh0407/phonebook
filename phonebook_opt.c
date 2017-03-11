@@ -17,11 +17,17 @@ entry *findName(char lastName[], entry *pHead)
 entry *append(char lastName[], entry *e)
 {
     /* allocate memory for the new entry and put lastName */
-    e->pNext = (entry *) malloc(sizeof(entry));
+    if( !(e->pNext = (entry *) malloc(sizeof(entry))) ) {
+        printf("ERROR: memory overflow\n");
+        exit(0);
+    }
     e = e->pNext;
-    e->data = (otherData *) malloc(sizeof(otherData));
+
+    if ( !( e->info = (otherInfo *) malloc(sizeof(otherInfo))) ) {
+        printf("ERROR: memory overflow\n");
+        exit(0);
+    }
     strcpy(e->lastName, lastName);
-    /* put other data after this line */
     e->pNext = NULL;
 
     return e;

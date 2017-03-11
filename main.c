@@ -84,7 +84,6 @@ int main(int argc, char *argv[])
     clock_gettime(CLOCK_REALTIME, &start);
 
 #ifdef HASH_OPT
-    entry *test = NULL;
     i = 0;
     while (fgets(line, sizeof(line), fp)) {
         while (line[i] != '\0')

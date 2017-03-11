@@ -6,11 +6,11 @@
 
 unsigned long int hash_function(char *str)
 {
-    unsigned long int hash = 0;
+    unsigned long int hash = 5381;
     int c;
 
     while((c = *str++)) {
-        hash = (hash * 131) + c;
+        hash += (hash << 5) + c;
     }
 
     return (hash % HASH_TABLE_SIZE);
@@ -38,7 +38,10 @@ entry *append(char lastName[], entry **head)
         while(temp->pNext)
             temp = temp->pNext;
     } else {
-        (*head) = (entry *) malloc(sizeof(entry));
+        if ( !((*head) = (entry *) malloc(sizeof(entry))) ) {
+            printf("ERROR : memory overflow\n");
+            exit(0);
+        }
         temp = (*head);
     }
     strcpy(temp->lastName, lastName);
